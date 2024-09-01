@@ -1,0 +1,7 @@
+langchain
+streamlit
+python-dotenv
+openai
+duckduckgo-search
+langchain_community
+python-weather
