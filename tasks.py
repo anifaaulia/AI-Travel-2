@@ -1,5 +1,5 @@
 from langchain.schema import HumanMessage
-from tools import search_tool, weather_tool
+from tools import search_tool, weather_tool, get_weather_sync
 import asyncio
 
 class AICrewMember:
@@ -48,7 +48,8 @@ class AICrewMember:
             formatted_results += f"- **{title}**\n{href}\n{body}\n\n"
         return formatted_results
     
-    async def get_weather(self, city):
-        weather = await self.weather_tool.find(city)
+    def get_weather(self, city):
+        # Use the synchronous version of the weather tool
+        weather = get_weather_sync(self.weather_tool, city)
         forecasts = weather.forecasts[0]
         return f"Weather in {city}: {forecasts.sky_text}, Temperature: {forecasts.temperature}°C"

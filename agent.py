@@ -1,6 +1,6 @@
 from langchain.chat_models import ChatOpenAI
 from tasks import AICrewMember
-from tools import search_tool, weather_tool
+from tools import search_tool, weather_tool, get_weather_sync
 
 def initialize_ai_model(api_key):
     return ChatOpenAI(
@@ -65,6 +65,16 @@ async def generate_itinerary(data, ai_crew):
     for member in ai_crew:
         result = await member.perform_task(data)
         results[member.role] = result
+    
+    for member in ai_crew:
+        if member.use_weather:
+            # For the weather agent, we use the synchronous method
+            weather_info = member.get_weather(data['cities'])
+            results[member.role] = weather_info
+        else:
+            # Perform the asynchronous task for non-weather agents
+            result = await member.perform_task(data)
+            results[member.role] = result
     
     itinerary = f"""
     **Travel Itinerary:**
